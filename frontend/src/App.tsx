@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, CheckCircle2, Circle, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Progress } from '@/components/ui/progress'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 
 interface Todo {
   id: number
@@ -18,6 +20,8 @@ function App() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [newTodo, setNewTodo] = useState('')
   const [loading, setLoading] = useState(false)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [completingId, setCompletingId] = useState<number | null>(null)
 
   const fetchTodos = async () => {
     try {
@@ -57,6 +61,12 @@ function App() {
   }
 
   const updateTodo = async (id: number, completed: boolean) => {
+    setCompletingId(id)
+    
+    setTodos(prev => prev.map(todo => 
+      todo.id === id ? { ...todo, completed } : todo
+    ))
+    
     try {
       const response = await fetch(`${API_URL}/api/todos/${id}`, {
         method: 'PUT',
@@ -71,13 +81,24 @@ function App() {
         setTodos(prev => prev.map(todo => 
           todo.id === id ? updatedTodo : todo
         ))
+      } else {
+        setTodos(prev => prev.map(todo => 
+          todo.id === id ? { ...todo, completed: !completed } : todo
+        ))
       }
     } catch (error) {
       console.error('Error updating todo:', error)
+      setTodos(prev => prev.map(todo => 
+        todo.id === id ? { ...todo, completed: !completed } : todo
+      ))
+    } finally {
+      setCompletingId(null)
     }
   }
 
   const deleteTodo = async (id: number) => {
+    setDeletingId(id)
+    
     try {
       const response = await fetch(`${API_URL}/api/todos/${id}`, {
         method: 'DELETE',
@@ -88,12 +109,16 @@ function App() {
       }
     } catch (error) {
       console.error('Error deleting todo:', error)
+    } finally {
+      setDeletingId(null)
     }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       createTodo()
+    } else if (e.key === 'Escape') {
+      setNewTodo('')
     }
   }
 
@@ -103,82 +128,141 @@ function App() {
 
   const completedCount = todos.filter(todo => todo.completed).length
   const totalCount = todos.length
+  const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center text-gray-800">
-              Todo App
-            </CardTitle>
-            <p className="text-center text-gray-600">
-              {totalCount > 0 && (
-                <span>
-                  {completedCount} of {totalCount} completed
-                </span>
-              )}
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center space-y-4 pb-6">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <CheckCircle2 className="w-8 h-8 text-indigo-600" />
+              <CardTitle className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Todo App
+              </CardTitle>
+            </div>
+            
+            {totalCount > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                  <Circle className="w-4 h-4" />
+                  <span className="font-medium">
+                    {completedCount} of {totalCount} completed ({Math.round(progressPercentage)}%)
+                  </span>
+                </div>
+                <div className="max-w-xs mx-auto">
+                  <Progress 
+                    value={progressPercentage} 
+                    className="h-2 bg-gray-200"
+                  />
+                </div>
+              </div>
+            )}
           </CardHeader>
-          <CardContent className="space-y-4">
+          
+          <CardContent className="space-y-6">
             <div className="flex gap-2">
               <Input
                 type="text"
-                placeholder="Add a new todo..."
+                placeholder="Add a new todo... (Press Enter to add, Esc to clear)"
                 value={newTodo}
                 onChange={(e) => setNewTodo(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="flex-1"
+                className="flex-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 transition-colors"
+                disabled={loading}
               />
               <Button 
                 onClick={createTodo} 
                 disabled={loading || !newTodo.trim()}
-                className="px-4"
+                className="px-4 bg-indigo-600 hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg"
               >
-                <Plus className="w-4 h-4" />
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
               </Button>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               {todos.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">
-                  No todos yet. Add one above!
-                </p>
-              ) : (
-                todos.map((todo) => (
-                  <div
-                    key={todo.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg border ${
-                      todo.completed 
-                        ? 'bg-gray-50 border-gray-200' 
-                        : 'bg-white border-gray-300'
-                    }`}
-                  >
-                    <Checkbox
-                      checked={todo.completed}
-                      onCheckedChange={(checked) => 
-                        updateTodo(todo.id, checked as boolean)
-                      }
-                    />
-                    <span
-                      className={`flex-1 ${
-                        todo.completed
-                          ? 'line-through text-gray-500'
-                          : 'text-gray-800'
-                      }`}
-                    >
-                      {todo.title}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteTodo(todo.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                <div className="text-center py-12 space-y-4">
+                  <div className="w-16 h-16 mx-auto bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-8 h-8 text-indigo-500" />
                   </div>
-                ))
+                  <div>
+                    <p className="text-gray-600 font-medium">No todos yet!</p>
+                    <p className="text-gray-500 text-sm">Add your first todo above to get started</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {todos.map((todo, index) => (
+                    <div
+                      key={todo.id}
+                      className={`group flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 hover:shadow-md ${
+                        todo.completed 
+                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:border-green-300' 
+                          : 'bg-white border-gray-200 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-white hover:to-indigo-50'
+                      } ${completingId === todo.id ? 'animate-pulse' : ''} ${
+                        deletingId === todo.id ? 'opacity-50 scale-95' : 'animate-in slide-in-from-top-2'
+                      }`}
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      <Checkbox
+                        checked={todo.completed}
+                        onCheckedChange={(checked) => 
+                          updateTodo(todo.id, checked as boolean)
+                        }
+                        disabled={completingId === todo.id}
+                        className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                      />
+                      <span
+                        className={`flex-1 transition-all duration-300 ${
+                          todo.completed
+                            ? 'line-through text-gray-500 font-medium'
+                            : 'text-gray-800 group-hover:text-indigo-700'
+                        }`}
+                      >
+                        {todo.title}
+                      </span>
+                      
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={deletingId === todo.id}
+                            className="opacity-0 group-hover:opacity-100 transition-all duration-200 text-red-500 hover:text-red-700 hover:bg-red-50 hover:scale-105"
+                          >
+                            {deletingId === todo.id ? (
+                              <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Todo</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{todo.title}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteTodo(todo.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </CardContent>
