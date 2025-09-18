@@ -37,7 +37,17 @@ function App() {
     { id: 17, title: "Add error handling", completed: false, created_at: "2024-01-15T02:00:00Z" },
     { id: 18, title: "Update README file", completed: false, created_at: "2024-01-15T01:30:00Z" },
     { id: 19, title: "Implement dark mode", completed: true, created_at: "2024-01-15T01:00:00Z" },
-    { id: 20, title: "Performance testing", completed: false, created_at: "2024-01-15T00:30:00Z" }
+    { id: 20, title: "Performance testing", completed: false, created_at: "2024-01-15T00:30:00Z" },
+    { id: 21, title: "Implement search functionality", completed: false, created_at: "2024-01-15T00:00:00Z" },
+    { id: 22, title: "Add data validation", completed: true, created_at: "2024-01-14T23:30:00Z" },
+    { id: 23, title: "Create user onboarding flow", completed: false, created_at: "2024-01-14T23:00:00Z" },
+    { id: 24, title: "Optimize bundle size", completed: false, created_at: "2024-01-14T22:30:00Z" },
+    { id: 25, title: "Add keyboard shortcuts", completed: true, created_at: "2024-01-14T22:00:00Z" },
+    { id: 26, title: "Implement drag and drop", completed: false, created_at: "2024-01-14T21:30:00Z" },
+    { id: 27, title: "Add export functionality", completed: false, created_at: "2024-01-14T21:00:00Z" },
+    { id: 28, title: "Create admin dashboard", completed: true, created_at: "2024-01-14T20:30:00Z" },
+    { id: 29, title: "Implement real-time notifications", completed: false, created_at: "2024-01-14T20:00:00Z" },
+    { id: 30, title: "Add multi-language support", completed: false, created_at: "2024-01-14T19:30:00Z" }
   ])
   const [newTodo, setNewTodo] = useState('')
   const [loading, setLoading] = useState(false)
@@ -152,8 +162,8 @@ function App() {
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-8">
-      <div className="w-full max-w-none">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 px-4">
+      <div className="w-full">
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4 pb-6">
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -218,14 +228,23 @@ function App() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {todos.map((todo, index) => (
+                  {todos.map((todo, index) => {
+                    const colorSchemes = [
+                      'bg-gradient-to-r from-red-50 to-pink-50 border-red-200 hover:border-red-300',
+                      'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 hover:border-orange-300',
+                      'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:border-green-300',
+                      'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 hover:border-blue-300',
+                      'bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 hover:border-purple-300',
+                      'bg-gradient-to-r from-pink-50 to-rose-50 border-pink-200 hover:border-pink-300'
+                    ];
+                    const colorScheme = todo.completed 
+                      ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:border-green-300'
+                      : colorSchemes[index % colorSchemes.length];
+                    
+                    return (
                     <div
                       key={todo.id}
-                      className={`group flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 hover:shadow-md ${
-                        todo.completed 
-                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:border-green-300' 
-                          : 'bg-white border-gray-200 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-white hover:to-indigo-50'
-                      } ${completingId === todo.id ? 'animate-pulse' : ''} ${
+                      className={`group flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 hover:shadow-md ${colorScheme} ${completingId === todo.id ? 'animate-pulse' : ''} ${
                         deletingId === todo.id ? 'opacity-50 scale-95' : 'animate-in slide-in-from-top-2'
                       }`}
                       style={{ animationDelay: `${index * 50}ms` }}
@@ -282,7 +301,8 @@ function App() {
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
