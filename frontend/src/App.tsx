@@ -17,7 +17,28 @@ interface Todo {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos] = useState<Todo[]>([
+    { id: 1, title: "Complete project documentation", completed: false, created_at: "2024-01-15T10:00:00Z" },
+    { id: 2, title: "Review code changes", completed: true, created_at: "2024-01-15T09:30:00Z" },
+    { id: 3, title: "Update dependencies", completed: false, created_at: "2024-01-15T09:00:00Z" },
+    { id: 4, title: "Fix responsive design issues", completed: true, created_at: "2024-01-15T08:30:00Z" },
+    { id: 5, title: "Implement user authentication", completed: false, created_at: "2024-01-15T08:00:00Z" },
+    { id: 6, title: "Write unit tests", completed: false, created_at: "2024-01-15T07:30:00Z" },
+    { id: 7, title: "Optimize database queries", completed: true, created_at: "2024-01-15T07:00:00Z" },
+    { id: 8, title: "Deploy to staging environment", completed: false, created_at: "2024-01-15T06:30:00Z" },
+    { id: 9, title: "Create API documentation", completed: false, created_at: "2024-01-15T06:00:00Z" },
+    { id: 10, title: "Set up monitoring alerts", completed: true, created_at: "2024-01-15T05:30:00Z" },
+    { id: 11, title: "Refactor legacy components", completed: false, created_at: "2024-01-15T05:00:00Z" },
+    { id: 12, title: "Update user interface design", completed: false, created_at: "2024-01-15T04:30:00Z" },
+    { id: 13, title: "Implement caching strategy", completed: true, created_at: "2024-01-15T04:00:00Z" },
+    { id: 14, title: "Configure CI/CD pipeline", completed: false, created_at: "2024-01-15T03:30:00Z" },
+    { id: 15, title: "Conduct security audit", completed: false, created_at: "2024-01-15T03:00:00Z" },
+    { id: 16, title: "Optimize image loading", completed: true, created_at: "2024-01-15T02:30:00Z" },
+    { id: 17, title: "Add error handling", completed: false, created_at: "2024-01-15T02:00:00Z" },
+    { id: 18, title: "Update README file", completed: false, created_at: "2024-01-15T01:30:00Z" },
+    { id: 19, title: "Implement dark mode", completed: true, created_at: "2024-01-15T01:00:00Z" },
+    { id: 20, title: "Performance testing", completed: false, created_at: "2024-01-15T00:30:00Z" }
+  ])
   const [newTodo, setNewTodo] = useState('')
   const [loading, setLoading] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
@@ -131,8 +152,8 @@ function App() {
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-8">
+      <div className="w-full max-w-none">
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4 pb-6">
             <div className="flex items-center justify-center gap-2 mb-2">
