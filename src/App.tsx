@@ -266,99 +266,109 @@ function App() {
           {/* Main Panel Content */}
           <div className="flex-1 flex">
             {/* Audio Waveform Section */}
-            <div className="flex-1 bg-blue-100 p-4">
+            <div className="flex-1 bg-gradient-to-b from-slate-500 via-slate-600 to-slate-700 p-4">
               <div className="mb-4">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Volume2 size={16} />
-                  <span className="text-sm font-medium">Speaking Clock</span>
-                  <span className="text-xs text-gray-500">00</span>
+                  <Volume2 size={16} className="text-white" />
+                  <span className="text-sm font-medium text-white">Speaking Clock</span>
+                  <span className="text-xs text-gray-300">00</span>
                 </div>
-                <div className="bg-white h-16 rounded border border-gray-300 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-full h-8 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 opacity-50"></div>
-                  </div>
-                  <div className="absolute top-0 left-0 w-full h-full">
-                    {Array.from({length: 50}).map((_, i) => (
+                <div className="bg-slate-700 h-20 border border-slate-600 relative overflow-hidden">
+                  {/* Waveform background */}
+                  <div className="absolute inset-0 bg-slate-800"></div>
+                  {/* More realistic waveform visualization */}
+                  <div className="absolute top-0 left-0 w-full h-full flex items-center">
+                    {Array.from({length: 300}).map((_, i) => (
                       <div 
                         key={i} 
-                        className="absolute bg-blue-500 opacity-70" 
+                        className="bg-white opacity-90" 
                         style={{
-                          left: `${i * 2}%`,
-                          top: '25%',
                           width: '1px',
-                          height: `${Math.random() * 50 + 25}%`
+                          height: `${Math.abs(Math.sin(i * 0.05) * Math.cos(i * 0.02)) * 60 + 20}%`,
+                          marginLeft: '0.5px'
                         }}
                       />
                     ))}
                   </div>
+                  {/* Green timeline indicator */}
+                  <div className="absolute left-1/2 top-0 w-0.5 h-full bg-green-400"></div>
                 </div>
               </div>
 
               <div className="mb-4">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Volume2 size={16} />
-                  <span className="text-sm font-medium">Channel 1 (UDP)</span>
+                  <Volume2 size={16} className="text-white" />
+                  <span className="text-sm font-medium text-white">Channel 1 (UDP)</span>
                 </div>
-                <div className="bg-white h-16 rounded border border-gray-300 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-full h-8 bg-gradient-to-r from-green-200 via-green-300 to-green-200 opacity-50"></div>
-                  </div>
-                  <div className="absolute top-0 left-0 w-full h-full">
-                    {Array.from({length: 50}).map((_, i) => (
-                      <div 
-                        key={i} 
-                        className="absolute bg-green-500 opacity-70" 
-                        style={{
-                          left: `${i * 2}%`,
-                          top: '20%',
-                          width: '1px',
-                          height: `${Math.random() * 60 + 20}%`
-                        }}
-                      />
+                <div className="bg-slate-700 h-20 border border-slate-600 relative overflow-hidden">
+                  {/* Waveform background */}
+                  <div className="absolute inset-0 bg-slate-800"></div>
+                  {/* Audio waveform with circular peaks like original */}
+                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-around">
+                    {Array.from({length: 8}).map((_, i) => (
+                      <div key={i} className="flex items-center justify-center">
+                        <div 
+                          className="bg-white rounded-full opacity-95 shadow-lg" 
+                          style={{
+                            width: `${30 + Math.random() * 15}px`,
+                            height: `${30 + Math.random() * 15}px`,
+                            background: 'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(220,220,220,0.8) 100%)'
+                          }}
+                        ></div>
+                      </div>
                     ))}
                   </div>
+                  {/* Green timeline indicator */}
+                  <div className="absolute left-1/2 top-0 w-0.5 h-full bg-green-400"></div>
                 </div>
               </div>
 
-              {/* Video Thumbnails */}
-              <div className="grid grid-cols-4 gap-2 mt-4">
+              {/* Video Thumbnails - More realistic placeholders */}
+              <div className="grid grid-cols-4 gap-1 mt-4">
                 {Array.from({length: 8}).map((_, i) => (
-                  <div key={i} className="bg-gray-300 aspect-video rounded border border-gray-400 flex items-center justify-center">
-                    <Camera size={24} className="text-gray-500" />
+                  <div key={i} className="bg-slate-500 aspect-video border border-slate-600 flex items-center justify-center relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-400 to-slate-600"></div>
+                    <div className="absolute inset-1 bg-slate-600 rounded-sm"></div>
+                    <Camera size={16} className="text-slate-400 relative z-10" />
                   </div>
                 ))}
               </div>
 
               {/* Timeline */}
-              <div className="mt-4 bg-white p-2 rounded border border-gray-300">
-                <div className="flex justify-between text-xs text-gray-600 mb-1">
+              <div className="mt-4 bg-slate-400 p-2 border border-slate-500">
+                <div className="flex justify-between text-xs text-slate-800 mb-1 font-mono">
                   <span>06:28:00</span>
                   <span>06:32:17</span>
                   <span>06:38:00</span>
                 </div>
-                <div className="h-2 bg-gray-200 rounded relative">
+                <div className="h-3 bg-slate-500 relative border border-slate-600">
                   <div className="absolute left-1/2 top-0 w-0.5 h-full bg-green-500"></div>
                 </div>
               </div>
             </div>
 
             {/* Right Panel */}
-            <div className="w-64 bg-gray-200 border-l border-gray-300 p-4">
-              <div className="space-y-4">
+            <div className="w-64 bg-slate-500 border-l border-slate-600 p-4">
+              <div className="space-y-6">
                 <div>
-                  <label className="text-sm font-medium block mb-1">Volume</label>
-                  <input type="range" className="w-full" />
+                  <label className="text-sm font-medium block mb-2 text-white">Volume</label>
+                  <div className="bg-slate-600 p-2 rounded border border-slate-700">
+                    <input type="range" className="w-full accent-blue-400" defaultValue="75" />
+                  </div>
+                  <div className="text-xs text-slate-300 mt-1">Channel</div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium block mb-1">Channel</label>
-                  <select className="w-full p-1 border border-gray-300 rounded text-sm">
+                  <label className="text-sm font-medium block mb-2 text-white">Channel</label>
+                  <select className="w-full p-2 bg-slate-600 border border-slate-700 rounded text-sm text-white">
                     <option>Channel 1</option>
                     <option>Channel 2</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium block mb-1">AVC</label>
-                  <input type="range" className="w-full" />
+                  <label className="text-sm font-medium block mb-2 text-white">AVC</label>
+                  <div className="bg-slate-600 p-2 rounded border border-slate-700">
+                    <input type="range" className="w-full accent-blue-400" defaultValue="60" />
+                  </div>
                 </div>
               </div>
             </div>
