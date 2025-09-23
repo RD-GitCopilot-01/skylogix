@@ -305,7 +305,7 @@ func (m *Manager) getDefaultConfig() *Config {
 			Backends: map[string]BackendConfig{
 				"local": {
 					Type:     "local",
-					Endpoint: "/data/minio",
+					Endpoint: "./data/minio",
 					Enabled:  true,
 					RAID: RAIDConfig{
 						Level:   "1",
@@ -328,7 +328,7 @@ func (m *Manager) getDefaultConfig() *Config {
 		},
 		Database: DatabaseConfig{
 			Type: "sqlite",
-			Path: "/data/skylogix.db",
+			Path: "./data/skylogix.db",
 		},
 		Security: SecurityConfig{
 			JWTSecret:      "change-me-in-production",

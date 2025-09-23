@@ -19,7 +19,7 @@ import (
 func main() {
 	fmt.Println("Starting Skylogix Storage Management System...")
 
-	configManager := config.NewManager("/etc/skylogix/config.json")
+	configManager := config.NewManager("./config/config.json")
 	if err := configManager.LoadConfig(); err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
