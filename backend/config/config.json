@@ -1,0 +1,100 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "read_timeout": 30000000000,
+    "write_timeout": 30000000000,
+    "tls": {
+      "enabled": false,
+      "cert_file": "",
+      "key_file": ""
+    }
+  },
+  "storage": {
+    "default_backend": "local",
+    "backends": {
+      "local": {
+        "type": "local",
+        "endpoint": "./data/minio",
+        "credentials": {
+          "access_key": "",
+          "secret_key": "",
+          "username": "",
+          "password": "",
+          "token": ""
+        },
+        "raid": {
+          "level": "1",
+          "devices": null,
+          "spare_devices": null,
+          "chunk_size": 0,
+          "enabled": false
+        },
+        "options": null,
+        "enabled": true
+      }
+    },
+    "tiering_rules": null,
+    "replication": {
+      "enabled": false,
+      "targets": null,
+      "sync_mode": "",
+      "compression": false
+    },
+    "encryption": {
+      "enabled": true,
+      "algorithm": "AES-256-GCM",
+      "key_id": "default",
+      "options": null
+    }
+  },
+  "snmp": {
+    "enabled": true,
+    "listen_address": "0.0.0.0",
+    "port": 161,
+    "community": "public",
+    "version": "2c",
+    "users": null,
+    "trap_targets": null
+  },
+  "database": {
+    "type": "sqlite",
+    "path": "./data/skylogix.db",
+    "host": "",
+    "port": 0,
+    "database": "",
+    "username": "",
+    "password": "",
+    "options": null
+  },
+  "security": {
+    "jwt_secret": "change-me-in-production",
+    "session_timeout": 86400000000000,
+    "password_policy": {
+      "min_length": 8,
+      "require_upper": true,
+      "require_lower": true,
+      "require_digit": true,
+      "require_symbol": false
+    },
+    "two_factor_auth": false,
+    "audit_logging": true
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "output": "stdout",
+    "max_size": 100,
+    "max_backups": 3,
+    "max_age": 28,
+    "compress": true
+  },
+  "retention": {
+    "default_ttl": 2592000000000000,
+    "channel_rules": null,
+    "quarantine_ttl": 604800000000000,
+    "protected_mode": false,
+    "safety_threshold": 0.1
+  },
+  "updated_at": "2025-09-23T07:57:58.03709238Z"
+}
